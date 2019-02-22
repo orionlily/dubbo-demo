@@ -3,11 +3,11 @@ package com.deepexi.product.service.impl;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.dubbo.rpc.RpcContext;
-import com.deepexi.product.service.ProductService;
 import com.deepexi.product.domain.eo.Product;
-import com.deepexi.product.extension.ApplicationException;
 import com.deepexi.product.extension.AppRuntimeEnv;
+import com.deepexi.product.extension.ApplicationException;
 import com.deepexi.product.mapper.ProductMapper;
+import com.deepexi.product.service.ProductService;
 import com.deepexi.util.pageHelper.PageBean;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Component
 @Service(version = "${demo.service.version}")
@@ -30,21 +30,25 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private AppRuntimeEnv appRuntimeEnv;
 
+    @Override
     public PageBean getProductList(Integer page, Integer size, Integer age) {
         PageHelper.startPage(page, size);
         List<Product> userTasks = productMapper.selectPageVo(age);
         return new PageBean<>(userTasks);
     }
 
+    @Override
     public Object createProduct(Product product) {
         return productMapper.insert(product);
     }
 
+    @Override
     public Boolean deleteProductById(String id) {
         productMapper.deleteById(id);
         return true;
     }
 
+    @Override
     @SentinelResource(value = "testSentinel", fallback = "doFallback", blockHandler = "exceptionHandler")
     public Product getProductById(String id) {
         // dubbo生产者被消费者调用时，客户端隐式传入的参数

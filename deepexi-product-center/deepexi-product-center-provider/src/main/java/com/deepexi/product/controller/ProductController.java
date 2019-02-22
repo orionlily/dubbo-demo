@@ -1,9 +1,9 @@
 package com.deepexi.product.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.deepexi.product.service.ProductService;
 import com.deepexi.product.domain.eo.Product;
-import com.deepexi.user.service.UcUserService;
+import com.deepexi.product.service.ProductService;
+import com.deepexi.user.service.impl.UcUserService;
 import com.deepexi.util.config.Payload;
 import com.deepexi.util.constant.ContentType;
 import org.slf4j.Logger;
@@ -23,6 +23,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Reference(version = "${demo.service.version}")
+    private  UcUserService ucUserService;
 
     @GET
     @Path("/")
@@ -54,5 +57,16 @@ public class ProductController {
     @Path("/{id:[a-zA-Z0-9]+}")
     public Payload deleteProductById(@PathParam("id") String id) {
         return new Payload(productService.deleteProductById(id));
+    }
+
+    @GET
+    @Path("/testDubbo")
+    public  Payload testDubbo(@QueryParam("page") @DefaultValue("1")  Integer page,
+                              @QueryParam("size") @DefaultValue("10")  Integer size,
+                              @QueryParam("username") @DefaultValue("")  String username,
+                              @QueryParam("usernumber") @DefaultValue("")  String usernumber,
+                              @QueryParam("nickname") @DefaultValue("")  String nickname,
+                              @QueryParam("eamil") @DefaultValue("")  String email) {
+        return new Payload(ucUserService.getUcUserList(page, size, username, usernumber, nickname, email));
     }
 }
